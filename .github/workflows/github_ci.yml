@@ -1,0 +1,22 @@
+name: Deployment to webhook production
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    name: Deploy to AWS EC2
+    runs-on: ubuntu-latest
+    steps:
+      - name: Connection to AWS EC2
+        uses: appleboy/ssh-action@master
+        with:
+          host: ec2-18-191-111-168.us-east-2.compute.amazonaws.com
+          username: ubuntu
+          key: ${{ secrets.AWS_EC2_KEY_PERMISSION }}
+          port: 22
+          script: |
+            cd webhook
+            git pull origin main
+            node index.js

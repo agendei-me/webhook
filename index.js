@@ -1,7 +1,7 @@
 "use strict";
 
 const projectId = "agendei-agent-gkig";
-const whatsAppToken = "EAAIgs1ET8XsBAAKQZBI2SrKdVIcPTvZBOInTtgVZCQjwJle625VDw8QnYEDIUxTngATcDbqz4dq3hECZAWy8Cvb9yIE4aX8YqFxZC4RQaI4qnBz1WHBFNSqoLgFGRc0ZBMN8Twoylh2dZAOsoMSuzzmVwTCBD0C4IQ2kmVttwoFyDsCcetQjPKo3kZCf8C3nWxUkDwUqdu4GZAwZDZD";
+const whatsAppToken = "EAAIgs1ET8XsBALPJm9fHRhC311r9ERtsQ8L3hWq8mxqjhWXT0QL4JhmzXlrgeXLej8Psr8h5mO8S9aXuARKpELIVnC4iAL2vcBoKfzH80JTXoxmBMuZBAY2n3XzbuyX1a9SBe8mmKIpuu9u252Pmgi6tF7jRmKdBnSTPkpfbDraDMDMoykAnRW5za78p8YpWn0UdiwQZDZD";
 const verifyToken = "5tvufQGq";
 const dialogflowKeyFile = 'agendei-agent-gkig-041df50676a9.json'
 
