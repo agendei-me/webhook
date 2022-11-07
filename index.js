@@ -19,23 +19,6 @@ const sessionClient = new dialogflow.SessionsClient({
 });
 
 
-const params = "";
-
-app.post('/webhookDialogFlow', function(request, response) {
-    const agent = new WebhookClient({
-        request,
-        response
-    });
-
-    let intentMap = new Map();
-    intentMap.set('appointment', nomedafuncao)
-    agent.handleRequest(intentMap);
-    params = agent.parameters['date'];
-});
-
-function nomedafuncao(agent) {}
-
-
 app.use(express.json());
 app.use(express.urlencoded({
     extended: true
@@ -47,19 +30,8 @@ function isBlank(str) {
 }
 
 
-async function detectIntent(
-    projectId,
-    sessionId,
-    query,
-    contexts,
-    languageCode
-) {
-    const sessionPath = sessionClient.projectAgentSessionPath(
-        projectId,
-        sessionId
-    );
-
-
+async function detectIntent(projectId, sessionId, query, contexts, languageCode) {
+    const sessionPath = sessionClient.projectAgentSessionPath(projectId, sessionId);
 
     // The text query request.
     const request = {
@@ -117,9 +89,7 @@ async function executeQueries(projectId, sessionId, queries, languageCode) {
 app.listen(process.env.PORT || 1337, () => console.log("webhook is listening"));
 
 app.post("/webhook", async (req, res) => {
-    let h = req.body;
-    console.log(JSON.stringify(req.body, null, 2));
-    //let textoResposta = await executeQueries('zdg-9un9', msg.from, [msg.body], 'pt-br');
+    //let textResponse = await executeQueries('zdg-9un9', msg.from, [msg.body], 'pt-br');
     if (req.body.object) {
         if (
             req.body.entry &&
@@ -132,19 +102,16 @@ app.post("/webhook", async (req, res) => {
             let from = req.body.entry[0].changes[0].value.messages[0].from; // extract the phone number from the webhook payload
             let msg_body = req.body.entry[0].changes[0].value.messages[0].text.body; // extract the message text from the webhook payload
 
-            let textoResposta = await executeQueries(projectId, from, [msg_body], 'pt-br');
-            if (textoResposta !== null) {
+            let textResponse = await executeQueries(projectId, from, [msg_body], 'pt-br');
+            if (textResponse !== null) {
                 axios({
                     method: "POST", // Required, HTTP method, a string, e.g. POST, GET
-                    url: "https://graph.facebook.com/v14.0/" +
-                        phone_number_id +
-                        "/messages?access_token=" +
-                        whatsAppToken,
+                    url: `https://graph.facebook.com/v14.0/${phone_number_id}/messages?access_token=${whatsAppToken}`,
                     data: {
                         messaging_product: "whatsapp",
                         to: from,
                         text: {
-                            body: textoResposta
+                            body: textResponse
                         },
                     },
                     headers: {
@@ -160,12 +127,12 @@ app.post("/webhook", async (req, res) => {
 });
 
 
-app.get("/webhook/verifier", (req, res) => {
+app.get("/webhook", (req, res) => {
     const verify_token = verifyToken;
     let mode = req.query["hub.mode"];
     let token = req.query["hub.verify_token"];
     let challenge = req.query["hub.challenge"];
-    //console.log("Recebendo request", mode, token);
+
     if (mode && token) {
         if (mode === "subscribe" && token === verify_token) {
             console.log("WEBHOOK_VERIFIED");
@@ -177,7 +144,7 @@ app.get("/webhook/verifier", (req, res) => {
 });
 
 
-app.get("/webhook/", (req, res) => {
+app.get("/webhook/verifier", (req, res) => {
     console.log("Receiving route request");
     res.status(200).send("server up!" + whatsAppToken)
 })
